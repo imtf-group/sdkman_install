@@ -1,0 +1,27 @@
+---
+- name: Download SDKMAN
+  get_url:
+    url: "https://get.sdkman.io"
+    dest: /tmp/sdkman.sh
+    mode: "0755"
+
+- name: Install SDKMAN
+  command: /tmp/sdkman.sh
+  args:
+    creates: "{{ sdkman_install_dir }}/.sdkman"
+  environment:
+    SDKMAN_DIR: "{{ sdkman_install_dir }}"
+
+- name: Copy SDKMAN SDK installer
+  template:
+    src: install_sdks.sh.j2
+    dest: /tmp/install_sdks.sh
+    mode: "0755"
+
+- name: Install default SDK
+  command: /tmp/install_sdks.sh
+
+- name: Delete SDKMAN installer
+  file:
+    path: /tmp/sdkman.sh
+    state: absent
