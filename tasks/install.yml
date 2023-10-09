@@ -12,14 +12,9 @@
   environment:
     SDKMAN_DIR: "{{ sdkman_install_dir }}"
 
-- name: Copy SDKMAN SDK installer
-  template:
-    src: install_sdks.sh.j2
-    dest: /tmp/install_sdks.sh
-    mode: "0755"
-
 - name: Install default SDK
-  command: /tmp/install_sdks.sh
+  shell: source "{{ sdkman_install_dir }}/.sdkman/bin/sdkman-init.sh" && sdk install {{ item.0.name }} {{ item.1 }}
+  loop: "{{ query('subelements', sdkman_sdk_list, 'versions') }}"
 
 - name: Delete SDKMAN installer
   file:
